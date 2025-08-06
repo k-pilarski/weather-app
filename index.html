@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Weather Visualizer</title>
+    <meta name="description" content="An app to check the weather anywhere in the world">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
+</head>
+<body>
+    <main class="container">
+        <h1>Weather Visualize</h1>
+
+        <form class="weather-form" id="js--weather-form-id">
+            <input type="text" class="city-input" id="js--city-input-id" placeholder="Enter city name..." required />
+            <button type="submit">Search</button>
+        </form>
+
+        <div id="js--error-message" class="error-message" role="alert" aria-live="polite"></div>
+
+        <section id="js--current-weather-id" class="section current-weather">
+            <h2>Current Weather</h2>
+        </section>
+
+        <section id="js--forecast-id" class="section forecast">
+            <h2>5 Day Forecast</h2>
+            <div id="js--forecast-container-id" class="forecast-container"></div>
+        </section>
+    </main>
+
+    <script src="src/app.js" type="module"></script>
+</body>
+</html>
