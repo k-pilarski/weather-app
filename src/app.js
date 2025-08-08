@@ -1,15 +1,11 @@
 //app.js
 
-import { getCurrentWeather } from './api.js'
+import { weatherForm} from './elements.js'
+import { getCity  } from './taskHandler.js';
 
 
 async function init() {
-    try {
-        const weatherData = await getCurrentWeather('Lublin');
-        console.log(weatherData);
-    } catch (error) {
-        console.error(error);
-    }
+    weatherForm.addEventListener('submit', getCity);
 }
 
 init();
