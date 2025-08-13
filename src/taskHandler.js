@@ -9,7 +9,7 @@ export async function getCity(e){
      
     const city = cityInput.value;
     
-    if(!city) return;
+    if( !city ) return;
 
     try {
         const weatherData = await getCurrentWeather(city);
