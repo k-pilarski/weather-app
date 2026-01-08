@@ -5,7 +5,6 @@ const app = document.getElementById('js--app-id');
 
 /**
  * Weather Background Configuration
- * Maps weather conditions to Tailwind gradient classes for the body
  */
 const weatherBackgrounds = {
   Clear: 'bg-gradient-to-br from-blue-400 via-blue-600 to-blue-800',
@@ -15,12 +14,11 @@ const weatherBackgrounds = {
   Thunderstorm: 'bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900',
   Snow: 'bg-gradient-to-br from-blue-100 via-blue-300 to-slate-500',
   Mist: 'bg-gradient-to-br from-slate-500 via-gray-600 to-slate-800',
-  // Default dark theme
   Default: 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black'
 };
 
 /**
- * Returns SVG string based on weather condition
+ * Icons (Heroicons Solid)
  */
 const getWeatherIcon = (weatherMain) => {
   switch (weatherMain) {
@@ -29,13 +27,11 @@ const getWeatherIcon = (weatherMain) => {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-24 h-24 mx-auto text-yellow-300 animate-pulse drop-shadow-lg">
           <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
         </svg>`;
-    
     case 'Clouds':
       return `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-24 h-24 mx-auto text-gray-300 drop-shadow-md">
           <path fill-rule="evenodd" d="M4.5 9.75a6 6 0 0111.573-2.226 3.75 3.75 0 014.133 4.303A4.5 4.5 0 0118 20.25H6.75a5.25 5.25 0 01-2.25-10.5z" clip-rule="evenodd" />
         </svg>`;
-
     case 'Rain':
     case 'Drizzle':
       return `
@@ -43,13 +39,11 @@ const getWeatherIcon = (weatherMain) => {
           <path fill-rule="evenodd" d="M4.5 9.75a6 6 0 0111.573-2.226 3.75 3.75 0 014.133 4.303A4.5 4.5 0 0118 20.25H6.75a5.25 5.25 0 01-2.25-10.5z" clip-rule="evenodd" />
           <path d="M9.75 21a.75.75 0 001.5 0v-2.25a.75.75 0 00-1.5 0V21zM12.75 21a.75.75 0 001.5 0v-2.25a.75.75 0 00-1.5 0V21z" />
         </svg>`;
-    
     case 'Thunderstorm':
       return `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-24 h-24 mx-auto text-yellow-400 drop-shadow-lg">
           <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z" clip-rule="evenodd" />
         </svg>`;
-
     case 'Snow':
       return `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-24 h-24 mx-auto text-white drop-shadow-md">
@@ -63,7 +57,6 @@ const getWeatherIcon = (weatherMain) => {
           <path d="M12 6 L10 4 M12 6 L14 4" transform="rotate(120 12 12)"></path>
           <path d="M12 18 L10 20 M12 18 L14 20" transform="rotate(120 12 12)"></path>
         </svg>`;
-
     default:
       return `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-24 h-24 mx-auto text-slate-400">
@@ -105,16 +98,28 @@ function renderScreen() {
       <div id="js--temp-id" class="text-6xl font-bold text-white mb-2 tracking-tighter drop-shadow-lg">--°</div>
       <div id="js--description-id" class="text-white/80 text-xl font-medium capitalize mb-8 drop-shadow-md">Start by searching a city</div>
       
-      <div class="flex justify-between items-center bg-black/20 p-4 rounded-xl border border-white/10 backdrop-blur-md">
-        <div class="flex flex-col">
-          <span class="text-white/60 text-xs uppercase tracking-wider">Wind</span>
+      <div class="grid grid-cols-2 gap-4 bg-black/20 p-4 rounded-xl border border-white/10 backdrop-blur-md">
+        
+        <div class="flex flex-col items-center">
+          <span class="text-white/60 text-xs uppercase tracking-wider mb-1">Wind</span>
           <span id="js--windSpeed-id" class="text-white font-semibold text-lg">-- km/h</span>
         </div>
-        <div class="w-px h-8 bg-white/20"></div>
-        <div class="flex flex-col">
-          <span class="text-white/60 text-xs uppercase tracking-wider">Humidity</span>
+
+        <div class="flex flex-col items-center border-l border-white/10">
+          <span class="text-white/60 text-xs uppercase tracking-wider mb-1">Humidity</span>
           <span id="js--humidity-id" class="text-white font-semibold text-lg">--%</span>
         </div>
+
+        <div class="flex flex-col items-center border-t border-white/10 pt-3">
+          <span class="text-white/60 text-xs uppercase tracking-wider mb-1">Feels Like</span>
+          <span id="js--feels-like-id" class="text-white font-semibold text-lg">--°</span>
+        </div>
+
+        <div class="flex flex-col items-center border-l border-t border-white/10 pt-3">
+          <span class="text-white/60 text-xs uppercase tracking-wider mb-1">Pressure</span>
+          <span id="js--pressure-id" class="text-white font-semibold text-lg">-- hPa</span>
+        </div>
+
       </div>
     </div>
   `
@@ -125,24 +130,25 @@ renderScreen();
 // Select DOM elements
 const searchBtn = document.getElementById('js--searchBtn-id');
 const cityInput = document.getElementById('js--cityInput-id');
+const cityNameElement = document.getElementById('js--city-name-id');
 const tempElement = document.getElementById('js--temp-id');
 const descElement = document.getElementById('js--description-id');
-const windElement = document.getElementById('js--windSpeed-id');
-const humidityElement = document.getElementById('js--humidity-id');
 const iconContainer = document.getElementById('js--icon-container-id');
 const errorElement = document.getElementById('js--error-message-id');
-const cityNameElement = document.getElementById('js--city-name-id');
+
+// Details Elements
+const windElement = document.getElementById('js--windSpeed-id');
+const humidityElement = document.getElementById('js--humidity-id');
+const feelsLikeElement = document.getElementById('js--feels-like-id'); // New
+const pressureElement = document.getElementById('js--pressure-id');   // New
+
 
 /**
- * UI Helper Functions
+ * Helpers
  */
-
-// Function to update Body background based on weather
 const updateBackground = (weatherMain) => {
   const body = document.body;
   const newClass = weatherBackgrounds[weatherMain] || weatherBackgrounds.Default;
-  
-  // Reset all known background classes first (to prevent conflicts)
   body.className = `bg-slate-950 text-white min-h-screen flex items-center justify-center font-sans p-4 transition-all duration-700 ease-in-out ${newClass}`;
 };
 
@@ -178,7 +184,6 @@ const setLoadingState = (isLoading) => {
 /**
  * Logic
  */
-
 const fetchWeather = async (city) => {
   const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
   const response = await fetch(url);
@@ -197,18 +202,20 @@ const fetchWeather = async (city) => {
 const updateUI = (data) => {
   if (!data) return;
 
+  // Basic Info
   cityNameElement.innerText = `${data.name}, ${data.sys.country}`;
   tempElement.innerText = `${Math.round(data.main.temp)}°`;
   descElement.innerText = data.weather[0].description;
+  
+  // Details Grid
   windElement.innerText = `${data.wind.speed} km/h`;
   humidityElement.innerText = `${data.main.humidity}%`;
+  feelsLikeElement.innerText = `${Math.round(data.main.feels_like)}°`;
+  pressureElement.innerText = `${data.main.pressure} hPa`;
 
+  // Visuals
   const weatherMain = data.weather[0].main;
-  
-  // Update Icon
   iconContainer.innerHTML = getWeatherIcon(weatherMain);
-  
-  // Update Background
   updateBackground(weatherMain);
 };
 
