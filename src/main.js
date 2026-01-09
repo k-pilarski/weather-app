@@ -18,7 +18,7 @@ const weatherBackgrounds = {
 };
 
 /**
- * Icons (Heroicons Solid)
+ * Icons
  */
 const getWeatherIcon = (weatherMain) => {
   switch (weatherMain) {
@@ -87,7 +87,9 @@ function renderScreen() {
 
     <div id="js--weatherResult-id" class="text-center transition-all duration-300">
       
-      <h2 id="js--city-name-id" class="text-3xl font-bold text-white mb-2 drop-shadow-lg"></h2>
+      <h2 id="js--city-name-id" class="text-3xl font-bold text-white drop-shadow-lg"></h2>
+      
+      <div id="js--date-time-id" class="text-white/80 text-sm font-light mb-4 tracking-wider"></div>
 
       <div id="js--icon-container-id" class="mb-4 min-h-[6rem] flex items-center justify-center filter drop-shadow-xl">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-20 h-20 text-slate-400/80">
@@ -99,27 +101,22 @@ function renderScreen() {
       <div id="js--description-id" class="text-white/80 text-xl font-medium capitalize mb-8 drop-shadow-md">Start by searching a city</div>
       
       <div class="grid grid-cols-2 gap-4 bg-black/20 p-4 rounded-xl border border-white/10 backdrop-blur-md">
-        
         <div class="flex flex-col items-center">
           <span class="text-white/60 text-xs uppercase tracking-wider mb-1">Wind</span>
           <span id="js--windSpeed-id" class="text-white font-semibold text-lg">-- km/h</span>
         </div>
-
         <div class="flex flex-col items-center border-l border-white/10">
           <span class="text-white/60 text-xs uppercase tracking-wider mb-1">Humidity</span>
           <span id="js--humidity-id" class="text-white font-semibold text-lg">--%</span>
         </div>
-
         <div class="flex flex-col items-center border-t border-white/10 pt-3">
           <span class="text-white/60 text-xs uppercase tracking-wider mb-1">Feels Like</span>
           <span id="js--feels-like-id" class="text-white font-semibold text-lg">--°</span>
         </div>
-
         <div class="flex flex-col items-center border-l border-t border-white/10 pt-3">
           <span class="text-white/60 text-xs uppercase tracking-wider mb-1">Pressure</span>
           <span id="js--pressure-id" class="text-white font-semibold text-lg">-- hPa</span>
         </div>
-
       </div>
     </div>
   `
@@ -127,25 +124,43 @@ function renderScreen() {
 
 renderScreen();
 
-// Select DOM elements
+// DOM Selection
 const searchBtn = document.getElementById('js--searchBtn-id');
 const cityInput = document.getElementById('js--cityInput-id');
 const cityNameElement = document.getElementById('js--city-name-id');
+const dateTimeElement = document.getElementById('js--date-time-id'); // New Element
 const tempElement = document.getElementById('js--temp-id');
 const descElement = document.getElementById('js--description-id');
 const iconContainer = document.getElementById('js--icon-container-id');
 const errorElement = document.getElementById('js--error-message-id');
-
-// Details Elements
 const windElement = document.getElementById('js--windSpeed-id');
 const humidityElement = document.getElementById('js--humidity-id');
-const feelsLikeElement = document.getElementById('js--feels-like-id'); // New
-const pressureElement = document.getElementById('js--pressure-id');   // New
-
+const feelsLikeElement = document.getElementById('js--feels-like-id');
+const pressureElement = document.getElementById('js--pressure-id');
 
 /**
  * Helpers
  */
+
+// Calculate local time for the city
+const calculateLocalTime = (timezoneOffset) => {
+  const now = new Date();
+  const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
+  
+  const cityTime = new Date(utcTime + (timezoneOffset * 1000));
+  
+  const options = { 
+    weekday: 'long', 
+    day: 'numeric', 
+    month: 'short', 
+    hour: '2-digit', 
+    minute: '2-digit',
+    hour12: false // 24h format
+  };
+  
+  return cityTime.toLocaleDateString('en-US', options).replace(',', '').replace(' at', ' |');
+};
+
 const updateBackground = (weatherMain) => {
   const body = document.body;
   const newClass = weatherBackgrounds[weatherMain] || weatherBackgrounds.Default;
@@ -182,7 +197,7 @@ const setLoadingState = (isLoading) => {
 };
 
 /**
- * Logic
+ * Main Logic
  */
 const fetchWeather = async (city) => {
   const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
@@ -204,10 +219,14 @@ const updateUI = (data) => {
 
   // Basic Info
   cityNameElement.innerText = `${data.name}, ${data.sys.country}`;
+  
+  // Update Date & Time based on timezone
+  dateTimeElement.innerText = calculateLocalTime(data.timezone);
+
   tempElement.innerText = `${Math.round(data.main.temp)}°`;
   descElement.innerText = data.weather[0].description;
   
-  // Details Grid
+  // Details
   windElement.innerText = `${data.wind.speed} km/h`;
   humidityElement.innerText = `${data.main.humidity}%`;
   feelsLikeElement.innerText = `${Math.round(data.main.feels_like)}°`;
@@ -237,6 +256,7 @@ const handleSearch = async () => {
     console.error(error);
     showError(error.message);
     cityNameElement.innerText = '';
+    dateTimeElement.innerText = '';
   } finally {
     setLoadingState(false);
   }
