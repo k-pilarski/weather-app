@@ -3,6 +3,11 @@ import './style.css'
 const API_KEY = import.meta.env.VITE_API_KEY;
 const app = document.getElementById('js--app-id');
 
+const faviconLink = document.createElement('link');
+faviconLink.href = "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌦️</text></svg>";
+faviconLink.rel = 'icon';
+document.head.appendChild(faviconLink);
+
 /**
  * Weather Background Configuration
  */
