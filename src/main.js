@@ -25,48 +25,28 @@ const weatherBackgrounds = {
 /**
  * Icons
  */
-const getWeatherIcon = (weatherMain) => {
+const getWeatherIcon = (weatherMain, sizeClass = "w-24 h-24") => {
+  const commonClasses = `${sizeClass} mx-auto drop-shadow-md`;
+  
   switch (weatherMain) {
     case 'Clear':
-      return `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-24 h-24 mx-auto text-yellow-300 animate-pulse drop-shadow-lg">
-          <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
-        </svg>`;
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="${commonClasses} text-yellow-300 animate-pulse"><path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" /></svg>`;
+    
     case 'Clouds':
-      return `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-24 h-24 mx-auto text-gray-300 drop-shadow-md">
-          <path fill-rule="evenodd" d="M4.5 9.75a6 6 0 0111.573-2.226 3.75 3.75 0 014.133 4.303A4.5 4.5 0 0118 20.25H6.75a5.25 5.25 0 01-2.25-10.5z" clip-rule="evenodd" />
-        </svg>`;
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="${commonClasses} text-gray-300"><path fill-rule="evenodd" d="M4.5 9.75a6 6 0 0111.573-2.226 3.75 3.75 0 014.133 4.303A4.5 4.5 0 0118 20.25H6.75a5.25 5.25 0 01-2.25-10.5z" clip-rule="evenodd" /></svg>`;
+    
     case 'Rain':
     case 'Drizzle':
-      return `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-24 h-24 mx-auto text-blue-300 drop-shadow-md">
-          <path fill-rule="evenodd" d="M4.5 9.75a6 6 0 0111.573-2.226 3.75 3.75 0 014.133 4.303A4.5 4.5 0 0118 20.25H6.75a5.25 5.25 0 01-2.25-10.5z" clip-rule="evenodd" />
-          <path d="M9.75 21a.75.75 0 001.5 0v-2.25a.75.75 0 00-1.5 0V21zM12.75 21a.75.75 0 001.5 0v-2.25a.75.75 0 00-1.5 0V21z" />
-        </svg>`;
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="${commonClasses} text-blue-300"><path fill-rule="evenodd" d="M4.5 9.75a6 6 0 0111.573-2.226 3.75 3.75 0 014.133 4.303A4.5 4.5 0 0118 20.25H6.75a5.25 5.25 0 01-2.25-10.5z" clip-rule="evenodd" /><path d="M9.75 21a.75.75 0 001.5 0v-2.25a.75.75 0 00-1.5 0V21zM12.75 21a.75.75 0 001.5 0v-2.25a.75.75 0 00-1.5 0V21z" /></svg>`;
+    
     case 'Thunderstorm':
-      return `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-24 h-24 mx-auto text-yellow-400 drop-shadow-lg">
-          <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z" clip-rule="evenodd" />
-        </svg>`;
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="${commonClasses} text-yellow-400"><path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z" clip-rule="evenodd" /></svg>`;
+    
     case 'Snow':
-      return `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-24 h-24 mx-auto text-white drop-shadow-md">
-          <line x1="12" y1="2" x2="12" y2="22"></line>
-          <line x1="12" y1="2" x2="12" y2="22" transform="rotate(60 12 12)"></line>
-          <line x1="12" y1="2" x2="12" y2="22" transform="rotate(120 12 12)"></line>
-          <path d="M12 6 L10 4 M12 6 L14 4"></path>
-          <path d="M12 18 L10 20 M12 18 L14 20"></path>
-          <path d="M12 6 L10 4 M12 6 L14 4" transform="rotate(60 12 12)"></path>
-          <path d="M12 18 L10 20 M12 18 L14 20" transform="rotate(60 12 12)"></path>
-          <path d="M12 6 L10 4 M12 6 L14 4" transform="rotate(120 12 12)"></path>
-          <path d="M12 18 L10 20 M12 18 L14 20" transform="rotate(120 12 12)"></path>
-        </svg>`;
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="${commonClasses} text-white"><line x1="12" y1="2" x2="12" y2="22"></line><line x1="12" y1="2" x2="12" y2="22" transform="rotate(60 12 12)"></line><line x1="12" y1="2" x2="12" y2="22" transform="rotate(120 12 12)"></line><path d="M12 6 L10 4 M12 6 L14 4"></path><path d="M12 18 L10 20 M12 18 L14 20"></path><path d="M12 6 L10 4 M12 6 L14 4" transform="rotate(60 12 12)"></path><path d="M12 18 L10 20 M12 18 L14 20" transform="rotate(60 12 12)"></path><path d="M12 6 L10 4 M12 6 L14 4" transform="rotate(120 12 12)"></path><path d="M12 18 L10 20 M12 18 L14 20" transform="rotate(120 12 12)"></path></svg>`;
+    
     default:
-      return `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-24 h-24 mx-auto text-slate-400">
-          <path fill-rule="evenodd" d="M4.5 9.75a6 6 0 0111.573-2.226 3.75 3.75 0 014.133 4.303A4.5 4.5 0 0118 20.25H6.75a5.25 5.25 0 01-2.25-10.5z" clip-rule="evenodd" />
-        </svg>`;
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="${commonClasses} text-slate-400"><path fill-rule="evenodd" d="M4.5 9.75a6 6 0 0111.573-2.226 3.75 3.75 0 014.133 4.303A4.5 4.5 0 0118 20.25H6.75a5.25 5.25 0 01-2.25-10.5z" clip-rule="evenodd" /></svg>`;
   }
 };
 
@@ -93,19 +73,16 @@ function renderScreen() {
     <div id="js--weatherResult-id" class="text-center transition-all duration-300">
       
       <h2 id="js--city-name-id" class="text-3xl font-bold text-white drop-shadow-lg"></h2>
-      
       <div id="js--date-time-id" class="text-white/80 text-sm font-light mb-4 tracking-wider"></div>
 
       <div id="js--icon-container-id" class="mb-4 min-h-[6rem] flex items-center justify-center filter drop-shadow-xl">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-20 h-20 text-slate-400/80">
-           <path fill-rule="evenodd" d="M4.5 9.75a6 6 0 0111.573-2.226 3.75 3.75 0 014.133 4.303A4.5 4.5 0 0118 20.25H6.75a5.25 5.25 0 01-2.25-10.5z" clip-rule="evenodd" />
-        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-20 h-20 mx-auto text-slate-400/80"><path fill-rule="evenodd" d="M4.5 9.75a6 6 0 0111.573-2.226 3.75 3.75 0 014.133 4.303A4.5 4.5 0 0118 20.25H6.75a5.25 5.25 0 01-2.25-10.5z" clip-rule="evenodd" /></svg>
       </div>
 
       <div id="js--temp-id" class="text-6xl font-bold text-white mb-2 tracking-tighter drop-shadow-lg">--°</div>
       <div id="js--description-id" class="text-white/80 text-xl font-medium capitalize mb-8 drop-shadow-md">Start by searching a city</div>
       
-      <div class="grid grid-cols-2 gap-4 bg-black/20 p-4 rounded-xl border border-white/10 backdrop-blur-md">
+      <div class="grid grid-cols-2 gap-4 bg-black/20 p-4 rounded-xl border border-white/10 backdrop-blur-md mb-8">
         <div class="flex flex-col items-center">
           <span class="text-white/60 text-xs uppercase tracking-wider mb-1">Wind</span>
           <span id="js--windSpeed-id" class="text-white font-semibold text-lg">-- km/h</span>
@@ -123,6 +100,14 @@ function renderScreen() {
           <span id="js--pressure-id" class="text-white font-semibold text-lg">-- hPa</span>
         </div>
       </div>
+
+      <div class="text-center">
+        <h3 class="text-white/90 text-sm font-semibold mb-3 uppercase tracking-wider">5-Day Forecast</h3>
+        <div id="js--forecast-container-id" class="grid grid-cols-5 gap-2">
+           <div class="text-center text-white/40 text-xs col-span-5 py-4">Forecast data will appear here</div>
+        </div>
+      </div>
+
     </div>
   `
 }
@@ -133,7 +118,7 @@ renderScreen();
 const searchBtn = document.getElementById('js--searchBtn-id');
 const cityInput = document.getElementById('js--cityInput-id');
 const cityNameElement = document.getElementById('js--city-name-id');
-const dateTimeElement = document.getElementById('js--date-time-id'); // New Element
+const dateTimeElement = document.getElementById('js--date-time-id');
 const tempElement = document.getElementById('js--temp-id');
 const descElement = document.getElementById('js--description-id');
 const iconContainer = document.getElementById('js--icon-container-id');
@@ -142,6 +127,7 @@ const windElement = document.getElementById('js--windSpeed-id');
 const humidityElement = document.getElementById('js--humidity-id');
 const feelsLikeElement = document.getElementById('js--feels-like-id');
 const pressureElement = document.getElementById('js--pressure-id');
+const forecastContainer = document.getElementById('js--forecast-container-id');
 
 /**
  * Helpers
@@ -205,42 +191,65 @@ const setLoadingState = (isLoading) => {
  * Main Logic
  */
 const fetchWeather = async (city) => {
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
-  const response = await fetch(url);
+  const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
+  const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`;
 
-  if (!response.ok) {
-    if (response.status === 404) {
-      throw new Error(`City "${city}" not found.`);
-    } else {
-      throw new Error(`Something went wrong (${response.status})`);
-    }
+  const [weatherRes, forecastRes] = await Promise.all([
+    fetch(weatherUrl),
+    fetch(forecastUrl)
+  ]);
+
+  if (!weatherRes.ok) {
+    if (weatherRes.status === 404) throw new Error(`City "${city}" not found.`);
+    else throw new Error(`API Error (${weatherRes.status})`);
   }
+  
+  const weatherData = await weatherRes.json();
+  const forecastData = await forecastRes.json();
 
-  return await response.json();
+  return { weatherData, forecastData };
 };
 
-const updateUI = (data) => {
-  if (!data) return;
-
-  // Basic Info
-  cityNameElement.innerText = `${data.name}, ${data.sys.country}`;
+const processForecastData = (list) => {
+  const dailyData = list.filter(item => item.dt_txt.includes("12:00:00"));
   
-  // Update Date & Time based on timezone
-  dateTimeElement.innerText = calculateLocalTime(data.timezone);
-
-  tempElement.innerText = `${Math.round(data.main.temp)}°`;
-  descElement.innerText = data.weather[0].description;
+  if (dailyData.length < 5) {
+     return list.filter((_, index) => index % 8 === 0).slice(0, 5);
+  }
   
-  // Details
-  windElement.innerText = `${data.wind.speed} km/h`;
-  humidityElement.innerText = `${data.main.humidity}%`;
-  feelsLikeElement.innerText = `${Math.round(data.main.feels_like)}°`;
-  pressureElement.innerText = `${data.main.pressure} hPa`;
+  return dailyData.slice(0, 5);
+};
 
-  // Visuals
-  const weatherMain = data.weather[0].main;
-  iconContainer.innerHTML = getWeatherIcon(weatherMain);
+const updateUI = ({ weatherData, forecastData }) => {
+  cityNameElement.innerText = `${weatherData.name}, ${weatherData.sys.country}`;
+  dateTimeElement.innerText = calculateLocalTime(weatherData.timezone);
+  tempElement.innerText = `${Math.round(weatherData.main.temp)}°`;
+  descElement.innerText = weatherData.weather[0].description;
+  windElement.innerText = `${weatherData.wind.speed} km/h`;
+  humidityElement.innerText = `${weatherData.main.humidity}%`;
+  feelsLikeElement.innerText = `${Math.round(weatherData.main.feels_like)}°`;
+  pressureElement.innerText = `${weatherData.main.pressure} hPa`;
+
+  const weatherMain = weatherData.weather[0].main;
+  iconContainer.innerHTML = getWeatherIcon(weatherMain, "w-24 h-24");
   updateBackground(weatherMain);
+
+  const filteredForecast = processForecastData(forecastData.list);
+  
+  forecastContainer.innerHTML = filteredForecast.map(day => {
+    const date = new Date(day.dt * 1000);
+    const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+    const temp = Math.round(day.main.temp);
+    const icon = getWeatherIcon(day.weather[0].main, "w-6 h-6");
+
+    return `
+      <div class="bg-black/20 rounded-xl p-2 flex flex-col items-center justify-center border border-white/5 backdrop-blur-sm transition-transform hover:scale-105">
+        <span class="text-white/70 text-xs font-medium mb-1">${dayName}</span>
+        <div class="mb-1">${icon}</div>
+        <span class="text-white font-bold text-sm">${temp}°</span>
+      </div>
+    `;
+  }).join('');
 };
 
 const handleSearch = async () => {
