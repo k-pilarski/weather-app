@@ -61,9 +61,19 @@ function renderScreen() {
         placeholder="Enter city..." 
         class="flex-1 p-3 rounded-xl bg-white/20 border border-white/30 text-white placeholder-slate-300 focus:outline-none focus:border-white focus:ring-1 focus:ring-white transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm"
       />
+      
+      <button 
+        id="js--locBtn-id" 
+        class="bg-white/20 hover:bg-white/30 border border-white/30 text-white w-12 rounded-xl flex items-center justify-center transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm"
+        title="Use my location">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+          <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+        </svg>
+      </button>
+
       <button 
         id="js--searchBtn-id" 
-        class="bg-white/20 hover:bg-white/30 border border-white/30 text-white w-24 rounded-xl font-semibold transition-all shadow-lg flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed backdrop-blur-sm">
+        class="bg-white/20 hover:bg-white/30 border border-white/30 text-white px-4 rounded-xl font-semibold transition-all shadow-lg flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed backdrop-blur-sm">
         Search
       </button>
     </div>
@@ -116,6 +126,7 @@ renderScreen();
 
 // DOM Selection
 const searchBtn = document.getElementById('js--searchBtn-id');
+const locBtn = document.getElementById('js--locBtn-id');
 const cityInput = document.getElementById('js--cityInput-id');
 const cityNameElement = document.getElementById('js--city-name-id');
 const dateTimeElement = document.getElementById('js--date-time-id');
@@ -173,6 +184,7 @@ const setLoadingState = (isLoading) => {
   if (isLoading) {
     cityInput.disabled = true;
     searchBtn.disabled = true;
+    locBtn.disabled = true;
     searchBtn.innerHTML = `
       <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -182,6 +194,7 @@ const setLoadingState = (isLoading) => {
   } else {
     cityInput.disabled = false;
     searchBtn.disabled = false;
+    locBtn.disabled = false;
     searchBtn.innerText = 'Search';
     cityInput.focus();
   }
@@ -190,6 +203,16 @@ const setLoadingState = (isLoading) => {
 /**
  * Main Logic
  */
+
+const handleApiResponse = async (weatherRes, forecastRes) => {
+  if (!weatherRes.ok) throw new Error(`API Error (${weatherRes.status})`);
+  
+  const weatherData = await weatherRes.json();
+  const forecastData = await forecastRes.json();
+  return { weatherData, forecastData };
+};
+
+// Fetch by City Name
 const fetchWeather = async (city) => {
   const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
   const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`;
@@ -199,15 +222,24 @@ const fetchWeather = async (city) => {
     fetch(forecastUrl)
   ]);
 
-  if (!weatherRes.ok) {
-    if (weatherRes.status === 404) throw new Error(`City "${city}" not found.`);
-    else throw new Error(`API Error (${weatherRes.status})`);
+  if (!weatherRes.ok && weatherRes.status === 404) {
+    throw new Error(`City "${city}" not found.`);
   }
-  
-  const weatherData = await weatherRes.json();
-  const forecastData = await forecastRes.json();
 
-  return { weatherData, forecastData };
+  return handleApiResponse(weatherRes, forecastRes);
+};
+
+// Fetch by Coordinates (Lat/Lon)
+const fetchWeatherDataByCoords = async (lat, lon) => {
+  const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+  const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+
+  const [weatherRes, forecastRes] = await Promise.all([
+    fetch(weatherUrl),
+    fetch(forecastUrl)
+  ]);
+
+  return handleApiResponse(weatherRes, forecastRes);
 };
 
 const processForecastData = (list) => {
@@ -276,7 +308,40 @@ const handleSearch = async () => {
   }
 };
 
+const handleLocationSearch = () => {
+  if (!navigator.geolocation) {
+    showError("Geolocation is not supported by your browser");
+    return;
+  }
+
+  hideError();
+  setLoadingState(true);
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const { latitude, longitude } = position.coords;
+      
+      try {
+        const data = await fetchWeatherDataByCoords(latitude, longitude);
+        updateUI(data);
+        cityInput.value = ""; 
+      } catch (error) {
+        console.error("🚨 API Error details:", error);
+        showError(`GPS Error: ${error.message}`);
+      } finally {
+        setLoadingState(false);
+      }
+    },
+    (error) => {
+      console.error("Geolocation Error:", error);
+      showError("Location access denied or unavailable");
+      setLoadingState(false);
+    }
+  );
+};
+
 searchBtn.addEventListener('click', handleSearch);
+locBtn.addEventListener('click', handleLocationSearch);
 
 cityInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') handleSearch();
