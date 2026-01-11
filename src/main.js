@@ -1,15 +1,22 @@
 import './style.css'
 
+/**
+ * ------------------------------------------------------------------------
+ * Global Configuration & Initialization
+ * ------------------------------------------------------------------------
+ */
+
 const API_KEY = import.meta.env.VITE_API_KEY;
 const app = document.getElementById('js--app-id');
 
+// Inject static favicon dynamically (prevents 404 on favicon request)
 const faviconLink = document.createElement('link');
 faviconLink.href = "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌦️</text></svg>";
 faviconLink.rel = 'icon';
 document.head.appendChild(faviconLink);
 
 /**
- * Weather Background Configuration
+ * Maps OpenWeatherMap conditions to Tailwind CSS gradient classes.
  */
 const weatherBackgrounds = {
   Clear: 'bg-gradient-to-br from-blue-400 via-blue-600 to-blue-800',
@@ -23,7 +30,16 @@ const weatherBackgrounds = {
 };
 
 /**
- * Icons
+ * ------------------------------------------------------------------------
+ * View Layer (UI Generation)
+ * ------------------------------------------------------------------------
+ */
+
+/**
+ * Generates an inline SVG string for weather icons.
+ * @param {string} weatherMain - The main weather condition (e.g., 'Clear', 'Rain').
+ * @param {string} sizeClass - Tailwind classes for sizing (default: "w-24 h-24").
+ * @returns {string} SVG HTML string.
  */
 const getWeatherIcon = (weatherMain, sizeClass = "w-24 h-24") => {
   const commonClasses = `${sizeClass} mx-auto drop-shadow-md`;
@@ -50,6 +66,9 @@ const getWeatherIcon = (weatherMain, sizeClass = "w-24 h-24") => {
   }
 };
 
+/**
+ * Injects the initial HTML structure into the app container.
+ */
 function renderScreen() {
   app.innerHTML = `
     <h1 class="text-2xl font-bold text-center mb-6 text-white tracking-wide drop-shadow-md">🌤️ Weather Forecast</h1>
@@ -124,7 +143,12 @@ function renderScreen() {
 
 renderScreen();
 
-// DOM Selection
+/**
+ * ------------------------------------------------------------------------
+ * DOM Elements Selection
+ * ------------------------------------------------------------------------
+ */
+
 const searchBtn = document.getElementById('js--searchBtn-id');
 const locBtn = document.getElementById('js--locBtn-id');
 const cityInput = document.getElementById('js--cityInput-id');
@@ -141,14 +165,18 @@ const pressureElement = document.getElementById('js--pressure-id');
 const forecastContainer = document.getElementById('js--forecast-container-id');
 
 /**
- * Helpers
+ * ------------------------------------------------------------------------
+ * Helper Functions (Formatting & State)
+ * ------------------------------------------------------------------------
  */
 
-// Calculate local time for the city
+/**
+ * Formats local time based on the timezone offset.
+ * Returns string in "Weekday | HH:MM" format.
+ */
 const calculateLocalTime = (timezoneOffset) => {
   const now = new Date();
   const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
-  
   const cityTime = new Date(utcTime + (timezoneOffset * 1000));
   
   const options = { 
@@ -157,29 +185,41 @@ const calculateLocalTime = (timezoneOffset) => {
     month: 'short', 
     hour: '2-digit', 
     minute: '2-digit',
-    hour12: false // 24h format
+    hour12: false
   };
   
   return cityTime.toLocaleDateString('en-US', options).replace(',', '').replace(' at', ' |');
 };
 
+/**
+ * Updates the document body background based on weather condition.
+ */
 const updateBackground = (weatherMain) => {
   const body = document.body;
   const newClass = weatherBackgrounds[weatherMain] || weatherBackgrounds.Default;
   body.className = `bg-slate-950 text-white min-h-screen flex items-center justify-center font-sans p-4 transition-all duration-700 ease-in-out ${newClass}`;
 };
 
+/**
+ * Displays an error message and highlights the input.
+ */
 const showError = (message) => {
   errorElement.innerText = message;
   errorElement.classList.remove('opacity-0');
   cityInput.classList.add('border-red-400');
 };
 
+/**
+ * Hides the error message and resets input highlight.
+ */
 const hideError = () => {
   errorElement.classList.add('opacity-0');
   cityInput.classList.remove('border-red-400');
 };
 
+/**
+ * Toggles the loading state (spinners, disabled inputs).
+ */
 const setLoadingState = (isLoading) => {
   if (isLoading) {
     cityInput.disabled = true;
@@ -201,9 +241,15 @@ const setLoadingState = (isLoading) => {
 };
 
 /**
- * Main Logic
+ * ------------------------------------------------------------------------
+ * Business Logic (API & Data)
+ * ------------------------------------------------------------------------
  */
 
+
+/**
+ * Handles API responses and throws errors on non-200 status.
+ */
 const handleApiResponse = async (weatherRes, forecastRes) => {
   if (!weatherRes.ok) throw new Error(`API Error (${weatherRes.status})`);
   
@@ -212,7 +258,9 @@ const handleApiResponse = async (weatherRes, forecastRes) => {
   return { weatherData, forecastData };
 };
 
-// Fetch by City Name
+/**
+ * Fetches current weather and forecast by city name.
+ */
 const fetchWeather = async (city) => {
   const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
   const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`;
@@ -229,7 +277,9 @@ const fetchWeather = async (city) => {
   return handleApiResponse(weatherRes, forecastRes);
 };
 
-// Fetch by Coordinates (Lat/Lon)
+/**
+ * Fetches current weather and forecast by GPS coordinates.
+ */
 const fetchWeatherDataByCoords = async (lat, lon) => {
   const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
   const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
@@ -242,9 +292,13 @@ const fetchWeatherDataByCoords = async (lat, lon) => {
   return handleApiResponse(weatherRes, forecastRes);
 };
 
+/**
+ * Filters the 5-day forecast to get one reading per day (approx. 12:00 PM).
+ */
 const processForecastData = (list) => {
   const dailyData = list.filter(item => item.dt_txt.includes("12:00:00"));
   
+  // Fallback if 12:00 entries are missing
   if (dailyData.length < 5) {
      return list.filter((_, index) => index % 8 === 0).slice(0, 5);
   }
@@ -252,7 +306,11 @@ const processForecastData = (list) => {
   return dailyData.slice(0, 5);
 };
 
+/**
+ * Updates the DOM elements with the fetched weather data.
+ */
 const updateUI = ({ weatherData, forecastData }) => {
+  // 1. Current Weather
   cityNameElement.innerText = `${weatherData.name}, ${weatherData.sys.country}`;
   dateTimeElement.innerText = calculateLocalTime(weatherData.timezone);
   tempElement.innerText = `${Math.round(weatherData.main.temp)}°`;
@@ -266,6 +324,7 @@ const updateUI = ({ weatherData, forecastData }) => {
   iconContainer.innerHTML = getWeatherIcon(weatherMain, "w-24 h-24");
   updateBackground(weatherMain);
 
+  // 2. Forecast
   const filteredForecast = processForecastData(forecastData.list);
   
   forecastContainer.innerHTML = filteredForecast.map(day => {
@@ -283,6 +342,12 @@ const updateUI = ({ weatherData, forecastData }) => {
     `;
   }).join('');
 };
+
+/**
+ * ------------------------------------------------------------------------
+ * Event Handlers & Listeners
+ * ------------------------------------------------------------------------
+ */
 
 const handleSearch = async () => {
   const city = cityInput.value.trim();
